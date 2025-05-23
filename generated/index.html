@@ -1,0 +1,115 @@
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Squirrel Clicker</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <script type="importmap">
+      {
+        "imports": {
+          "canvas-confetti": "https://cdn.skypack.dev/canvas-confetti"
+        }
+      }
+    </script>
+</head>
+<body>
+    <div id="game-container">
+        <header id="game-header">
+            <img src="logo.png" alt="Energogarant Logo" id="logo">
+            <button id="rules-button" class="icon-button">
+                <img src="icon_rules.png" alt="Rules">
+            </button>
+        </header>
+
+        <div id="currency-display-wrapper">
+            <div id="currency-display">
+                <img src="nut_regular.png" alt="Nut" class="currency-icon">
+                <span id="nut-count">0</span>
+            </div>
+        </div>
+
+        <div id="screen-manager">
+            <div id="home-screen" class="game-screen">
+                <main id="main-content">
+                    <div id="squirrel-area">
+                        <img src="squirrel_idle.png" alt="Garanti the Squirrel" id="squirrel">
+                        <div id="click-effect-container"></div>
+                    </div>
+                    <div id="background-overlay"></div>
+                </main>
+
+                <section id="controls-area">
+                    <button id="speed-up-button" class="action-button">
+                        <div class="button-content">
+                            <span class="button-text">Ускорить!</span> <img src="icon_speedup.png" alt="" class="button-icon">
+                        </div>
+                        <div class="button-details">
+                            <span class="cost">-50 <img src="nut_regular.png" alt="Nut" class="inline-nut-icon"></span> for <span class="duration">30s</span>
+                        </div>
+                        <div id="speed-up-timer" class="timer-display"></div>
+                    </button>
+                    <button id="daily-bonus-button" class="action-button">
+                        <div class="button-content">
+                            <img src="icon_gift.png" alt="" class="button-icon"> <span class="button-text">Забрать бонус!</span>
+                        </div>
+                        <div id="daily-bonus-timer" class="timer-display"></div>
+                    </button>
+                </section>
+            </div>
+
+            <section id="upgrades-screen" class="game-screen hidden">
+                <h2 class="screen-title">Улучшения</h2>
+                <div id="upgrades-list-container">
+                    <div id="upgrades-list">
+                        <!-- Upgrade cards will be dynamically inserted here -->
+                    </div>
+                </div>
+            </section>
+
+            <section id="tasks-screen" class="game-screen hidden">
+                <h2 class="screen-title">Задания</h2>
+                <div id="tasks-list-container">
+                    <div id="tasks-list">
+                        <!-- Task cards will be dynamically inserted here -->
+                    </div>
+                </div>
+            </section>
+            <!-- Other screens like Rating can be added here -->
+        </div>
+
+        <nav id="bottom-menu">
+            <button class="nav-item active" data-screen="home">
+                <img src="icon_home.png" alt="Home">
+                <span>Главная</span>
+            </button>
+            <button class="nav-item" data-screen="upgrades">
+                <img src="icon_upgrades.png" alt="Upgrades">
+                <span>Апгрейды</span>
+            </button>
+            <button class="nav-item" data-screen="tasks">
+                <img src="icon_tasks.png" alt="Tasks">
+                <span>Задачи</span>
+            </button>
+            <button class="nav-item" data-screen="rating">
+                <img src="icon_rating.png" alt="Rating">
+                <span>Рейтинг</span>
+            </button>
+        </nav>
+    </div>
+
+    <div id="rules-modal" class="modal hidden">
+        <div class="modal-content">
+            <button id="close-rules-button" class="close-button">&times;</button>
+            <h2>Правила Игры</h2>
+            <p>Собирай гарантийные орешки, кликая по белке Гарантику!</p>
+            <p><strong>Обычные орешки:</strong> используются для улучшений.</p>
+            <p><strong>Редкие орешки (скоро):</strong> для особых наград!</p>
+            <p><strong>Цель игры:</strong> Застрахуй всех лесных жителей и стань лидером!</p>
+            <p><small>В разделе "О нас" можно найти ссылку на сайт "Энергогарант".</small></p>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>

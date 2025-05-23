@@ -1,24 +1,18 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-interface GameLayoutProps {
-  children: React.ReactNode;
-}
-
-const GameLayout: React.FC<GameLayoutProps> = ({ children }) => {
+const GameLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-background p-4"
+      style={{ minHeight: '100vh', backgroundColor: 'var(--background)', padding: '1rem' }}
     >
       <div className="max-w-4xl mx-auto">
         <header className="mb-8">
-          <h1 className="text-4xl font-bold text-center text-primary">
-            🐿️ СтрахоБелка
-          </h1>
+          <h1 className="text-4xl font-bold text-center">Garanti Squirrel</h1>
         </header>
-        <main>{children}</main>
+        {children}
       </div>
     </motion.div>
   );
