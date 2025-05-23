@@ -15,14 +15,14 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #8CB369 0%, #A1C181 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            color: #333;
-            user-select: none;
-        }
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: url('assets/background.jpg') center center/cover no-repeat fixed;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: #333;
+    user-select: none;
+}
 
         /* Header */
         .header {
@@ -95,32 +95,49 @@
 
         /* Squirrel */
         .squirrel-container {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 20px 0;
-        }
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 40px 0;
+}
 
-        .squirrel {
-            width: 200px;
-            height: 200px;
-            /* background: #D2691E; */
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.1s ease;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            position: relative;
-            overflow: hidden;
-        }
+.squirrel {
+    width: 350px;
+    height: 350px;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+    box-shadow: none;
+    position: relative;
+    overflow: visible;
+}
 
-        .squirrel img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+.squirrel img {
+    width: 100%;
+    height: 100%;
+    max-width: 350px;
+    max-height: 350px;
+    object-fit: contain;
+    pointer-events: none;
+    user-select: none;
+    animation: idle 2s ease-in-out infinite alternate;
+}
+
+@media (max-width: 480px) {
+    .squirrel {
+        width: 200px;
+        height: 200px;
+    }
+    .squirrel img {
+        max-width: 200px;
+        max-height: 200px;
+    }
+}
             pointer-events: none;
             user-select: none;
             animation: idle 2s ease-in-out infinite alternate;
@@ -368,7 +385,33 @@
             cursor: pointer;
             color: #999;
         }
-    </style>
+    .falling-nut {
+    position: fixed;
+    top: -80px;
+    width: 72px;
+    height: 72px;
+    z-index: 1000;
+    pointer-events: none;
+    animation: nut-fall-spin 2.2s cubic-bezier(.5,1.5,.5,1) forwards;
+}
+
+@keyframes nut-fall-spin {
+    0% {
+        transform: rotate(0deg) scale(1);
+        opacity: 1;
+    }
+    70% {
+        opacity: 1;
+        transform: rotate(300deg) scale(1.1);
+    }
+    100% {
+        top: 100vh;
+        transform: rotate(720deg) scale(0.8);
+        opacity: 0.8;
+    }
+}
+
+</style>
 </head>
 <body>
     <!-- Header -->
@@ -500,9 +543,25 @@
             
             // Show floating text
             showClickEffect(event, `+${nuts}`);
-            
+
+            // Show falling nut animation
+            showFallingNut();
+
             updateDisplay();
             saveGame();
+        }
+
+        // Анимация падающего ореха
+        function showFallingNut() {
+            const nut = document.createElement('img');
+            nut.src = 'assets/nut.png';
+            nut.className = 'falling-nut';
+            // Случайная горизонтальная позиция
+            nut.style.left = Math.random() * 80 + 10 + 'vw';
+            document.body.appendChild(nut);
+            nut.addEventListener('animationend', () => {
+                nut.remove();
+            });
         }
 
         // Show Click Effect
