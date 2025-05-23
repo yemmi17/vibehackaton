@@ -11,7 +11,7 @@
 
 1. Клонируйте репозиторий и перейдите в папку проекта:
    ```bash
-   git clone https://github.com/ВАШ_ЛОГИН/ИМЯ_РЕПО.git](https://github.com/yemmi17/vibehackaton
+   git clone https://github.com/yemmi17/vibehackaton
    cd vibehackaton
    git checkout main
    ```
