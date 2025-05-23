@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Орешек Гарантии</title>
+    <meta name="description" content="Игра-кликер от Энергогарант">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3A7CA5">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #8CB369 0%, #A1C181 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #333;
+            user-select: none;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 14px;
+            font-weight: 600;
+            color: #3A7CA5;
+        }
+
+        .help-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #3A7CA5;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Game Area */
+        .game-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: calc(100vh - 120px);
+        }
+
+        .nuts-counter {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nuts-count {
+            font-size: 28px;
+            font-weight: bold;
+            color: #3A7CA5;
+        }
+
+        .nut-icon {
+            width: 32px;
+            height: 32px;
+            background: #F4A261;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Squirrel */
+        .squirrel-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .squirrel {
+            width: 200px;
+            height: 200px;
+            /* background: #D2691E; */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .squirrel img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+            user-select: none;
+            animation: idle 2s ease-in-out infinite alternate;
+        }
+
+        .squirrel:hover {
+            transform: scale(1.05);
+        }
+
+        .squirrel:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes idle {
+            0% { transform: translateY(0px) rotate(-2deg); }
+            100% { transform: translateY(-5px) rotate(2deg); }
+        }
+
+        @keyframes click-effect {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .squirrel.clicked {
+            animation: click-effect 0.3s ease;
+        }
+
+        /* Click Effects */
+        .click-effect {
+            position: absolute;
+            pointer-events: none;
+            font-size: 24px;
+            font-weight: bold;
+            color: #F4A261;
+            animation: float-up 1s ease-out forwards;
+            z-index: 10;
+        }
+
+        @keyframes float-up {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px);
+            }
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .action-btn {
+            padding: 12px 20px;
+            background: #F4A261;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover:not(:disabled) {
+            background: #E09142;
+            transform: translateY(-2px);
+        }
+
+        .action-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            display: flex;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px;
+            justify-content: space-around;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            min-width: 60px;
+        }
+
+        .nav-item.active {
+            color: #3A7CA5;
+        }
+
+        .nav-item:not(.active) {
+            color: #999;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .nav-label {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Upgrades Panel */
+        .upgrades-panel {
+            display: none;
+            padding: 20px;
+            background: white;
+            position: fixed;
+            bottom: 80px;
+            left: 10px;
+            right: 10px;
+            border-radius: 15px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .upgrades-panel.active {
+            display: block;
+        }
+
+        .upgrade-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f8f8;
+            border-radius: 10px;
+            gap: 15px;
+        }
+
+        .upgrade-icon {
+            width: 48px;
+            height: 48px;
+            background: #3A7CA5;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .upgrade-info {
+            flex: 1;
+        }
+
+        .upgrade-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .upgrade-desc {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .upgrade-buy {
+            padding: 8px 16px;
+            background: #F4A261;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .upgrade-buy:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .squirrel {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .nuts-count {
+                font-size: 24px;
+            }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 90%;
+            width: 400px;
+        }
+
+        .modal h2 {
+            color: #3A7CA5;
+            margin-bottom: 15px;
+        }
+
+        .modal p {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">🛡️ Энергогарант</div>
+        <button class="help-btn" onclick="showHelp()">?</button>
+    </div>
+
+    <!-- Main Game Area -->
+    <div class="game-area">
+        <!-- Nuts Counter -->
+        <div class="nuts-counter">
+            <div class="nut-icon">🌰</div>
+            <div class="nuts-count" id="nutsCount">0</div>
+        </div>
+
+        <!-- Squirrel -->
+        <div class="squirrel-container">
+            <div class="squirrel" id="squirrel" onclick="clickSquirrel(event)">
+                <img src="assets/squirrel.png" alt="Белка" />
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="action-btn" id="speedUpBtn" onclick="activateSpeedUp()">
+                ⚡ Ускорить сбор
+                <small>(50 🌰)</small>
+            </button>
+            <button class="action-btn" onclick="claimDailyBonus()" id="dailyBonusBtn">
+                🎁 Дневной бонус
+            </button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="showSection('main')">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label">Главная</div>
+        </div>
+        <div class="nav-item" onclick="showSection('upgrades'); showUpgrades()">
+            <div class="nav-icon">⚙️</div>
+            <div class="nav-label">Апгрейды</div>
+        </div>
+        <div class="nav-item" onclick="showSection('tasks')">
+            <div class="nav-icon">🧾</div>
+            <div class="nav-label">Задачи</div>
+        </div>
+        <div class="nav-item" onclick="showSection('rating')">
+            <div class="nav-icon">🏆</div>
+            <div class="nav-label">Рейтинг</div>
+        </div>
+    </div>
+
+    <!-- Upgrades Panel -->
+    <div class="upgrades-panel" id="upgradesPanel">
+        <h2>🛡️ Страховые Продукты</h2>
+        <div id="upgradesList"></div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <h2>🐿️ Как играть</h2>
+            <p><strong>Цель:</strong> Собирай гарант-орешки, кликая по белке!</p>
+            <p><strong>Апгрейды:</strong> Покупай страховые продукты для увеличения дохода</p>
+            <p><strong>Бонусы:</strong> Не забывай забирать ежедневные награды</p>
+            <p><strong>Компания:</strong> Узнай больше о страховании на сайте Энергогарант</p>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let gameState = {
+            nuts: 0,
+            nutsPerClick: 1,
+            nutsPerSecond: 0,
+            speedUpActive: false,
+            speedUpTimeLeft: 0,
+            lastDailyBonus: 0,
+            upgrades: {}
+        };
+
+        // Upgrades Configuration
+        const upgrades = {
+            autoClicker: {
+                name: "🤖 Белка-Помощник",
+                desc: "+1 орешек в секунду",
+                baseCost: 50,
+                effect: () => gameState.nutsPerSecond += 1,
+                icon: "🤖"
+            },
+            betterClick: {
+                name: "🚗 КАСКО Защита",
+                desc: "+1 орешек за клик",
+                baseCost: 100,
+                effect: () => gameState.nutsPerClick += 1,
+                icon: "🚗"
+            },
+            travelInsurance: {
+                name: "✈️ Страхование Путешествий",
+                desc: "+3 орешка в секунду",
+                baseCost: 300,
+                effect: () => gameState.nutsPerSecond += 3,
+                icon: "✈️"
+            }
+        };
+
+        // Initialize Game
+        function initGame() {
+            loadGame();
+            updateDisplay();
+            renderUpgrades();
+            startGameLoop();
+            checkDailyBonus();
+        }
+
+        // Click Squirrel
+        function clickSquirrel(event) {
+            const nuts = gameState.speedUpActive ? gameState.nutsPerClick * 2 : gameState.nutsPerClick;
+            gameState.nuts += nuts;
+            
+            // Visual feedback
+            const squirrel = document.getElementById('squirrel');
+            squirrel.classList.add('clicked');
+            setTimeout(() => squirrel.classList.remove('clicked'), 300);
+            
+            // Show floating text
+            showClickEffect(event, `+${nuts}`);
+            
+            updateDisplay();
+            saveGame();
+        }
+
+        // Show Click Effect
+        function showClickEffect(event, text) {
+            const effect = document.createElement('div');
+            effect.className = 'click-effect';
+            effect.textContent = text;
+            effect.style.left = event.clientX + 'px';
+            effect.style.top = event.clientY + 'px';
+            document.body.appendChild(effect);
+            
+            setTimeout(() => {
+                document.body.removeChild(effect);
+            }, 1000);
+        }
+
+        // Speed Up
+        function activateSpeedUp() {
+            if (gameState.nuts >= 50 && !gameState.speedUpActive) {
+                gameState.nuts -= 50;
+                gameState.speedUpActive = true;
+                gameState.speedUpTimeLeft = 30;
+                updateDisplay();
+                saveGame();
+                
+                const btn = document.getElementById('speedUpBtn');
+                const interval = setInterval(() => {
+                    gameState.speedUpTimeLeft--;
+                    btn.textContent = `⚡ Активно (${gameState.speedUpTimeLeft}с)`;
+                    
+                    if (gameState.speedUpTimeLeft <= 0) {
+                        gameState.speedUpActive = false;
+                        btn.textContent = '⚡ Ускорить сбор (50 🌰)';
+                        btn.disabled = false;
+                        clearInterval(interval);
+                        updateDisplay();
+                    }
+                }, 1000);
+                
+                btn.disabled = true;
+            }
+        }
+
+        // Daily Bonus
+        function claimDailyBonus() {
+            const now = Date.now();
+            const dayInMs = 24 * 60 * 60 * 1000;
+            
+            if (now - gameState.lastDailyBonus >= dayInMs) {
+                gameState.nuts += 50;
+                gameState.lastDailyBonus = now;
+                updateDisplay();
+                saveGame();
+                
+                alert('🎁 Получен ежедневный бонус: +50 орешков!');
+            }
+        }
+
+        // Check Daily Bonus
+        function checkDailyBonus() {
+            const now = Date.now();
+            const dayInMs = 24 * 60 * 60 * 1000;
+            const btn = document.getElementById('dailyBonusBtn');
+            
+            if (now - gameState.lastDailyBonus >= dayInMs) {
+                btn.style.animation = 'pulse 2s infinite';
+                btn.style.background = '#28a745';
+            } else {
+                const timeLeft = dayInMs - (now - gameState.lastDailyBonus);
+                const hoursLeft = Math.ceil(timeLeft / (60 * 60 * 1000));
+                btn.textContent = `🎁 Доступно через ${hoursLeft}ч`;
+                btn.disabled = true;
+            }
+        }
+
+        // Buy Upgrade
+        function buyUpgrade(upgradeKey) {
+            const upgrade = upgrades[upgradeKey];
+            const currentLevel = gameState.upgrades[upgradeKey] || 0;
+            const cost = Math.floor(upgrade.baseCost * Math.pow(1.5, currentLevel));
+            
+            if (gameState.nuts >= cost) {
+                gameState.nuts -= cost;
+                gameState.upgrades[upgradeKey] = currentLevel + 1;
+                upgrade.effect();
+                updateDisplay();
+                renderUpgrades();
+                saveGame();
+            }
+        }
+
+        // Render Upgrades
+        function renderUpgrades() {
+            const container = document.getElementById('upgradesList');
+            container.innerHTML = '';
+            
+            Object.keys(upgrades).forEach(key => {
+                const upgrade = upgrades[key];
+                const currentLevel = gameState.upgrades[key] || 0;
+                const cost = Math.floor(upgrade.baseCost * Math.pow(1.5, currentLevel));
+                const canAfford = gameState.nuts >= cost;
+                
+                const div = document.createElement('div');
+                div.className = 'upgrade-item';
+                div.innerHTML = `
+                    <div class="upgrade-icon">${upgrade.icon}</div>
+                    <div class="upgrade-info">
+                        <div class="upgrade-name">${upgrade.name}</div>
+                        <div class="upgrade-desc">${upgrade.desc}</div>
+                        ${currentLevel > 0 ? `<small>Уровень: ${currentLevel}</small>` : ''}
+                    </div>
+                    <button class="upgrade-buy" onclick="buyUpgrade('${key}')" ${!canAfford ? 'disabled' : ''}>
+                        ${cost} 🌰
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Show Section
+        function showSection(section) {
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.nav-item').classList.add('active');
+            
+            // Hide all panels
+            document.getElementById('upgradesPanel').classList.remove('active');
+            
+            if (section === 'upgrades') {
+                showUpgrades();
+            }
+        }
+
+        // Show Upgrades
+        function showUpgrades() {
+            document.getElementById('upgradesPanel').classList.add('active');
+        }
+
+        // Show Help
+        function showHelp() {
+            document.getElementById('helpModal').style.display = 'block';
+        }
+
+        // Close Modal
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.style.display = 'none';
+            });
+        }
+
+        // Update Display
+        function updateDisplay() {
+            document.getElementById('nutsCount').textContent = gameState.nuts.toLocaleString();
+            
+            const speedUpBtn = document.getElementById('speedUpBtn');
+            if (!gameState.speedUpActive) {
+                speedUpBtn.disabled = gameState.nuts < 50;
+            }
+        }
+
+        // Game Loop
+        function startGameLoop() {
+            setInterval(() => {
+                if (gameState.nutsPerSecond > 0) {
+                    gameState.nuts += gameState.nutsPerSecond;
+                    updateDisplay();
+                    if (Math.random() < 0.1) { // Save occasionally
+                        saveGame();
+                    }
+                }
+            }, 1000);
+            
+            // Save every 30 seconds
+            setInterval(saveGame, 30000);
+        }
+
+        // Save Game
+        function saveGame() {
+            localStorage.setItem('nutClickerSave', JSON.stringify(gameState));
+        }
+
+        // Load Game
+        function loadGame() {
+            const saved = localStorage.getItem('nutClickerSave');
+            if (saved) {
+                gameState = { ...gameState, ...JSON.parse(saved) };
+            }
+        }
+
+        // Start Game
+        initGame();
+
+        // PWA Installation
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+
+        // Close modals on outside click
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
