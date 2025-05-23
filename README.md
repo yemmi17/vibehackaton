@@ -11,8 +11,8 @@
 
 1. Клонируйте репозиторий и перейдите в папку проекта:
    ```bash
-   git clone https://github.com/ВАШ_ЛОГИН/ИМЯ_РЕПО.git
-   cd ИМЯ_РЕПО
+   git clone https://github.com/ВАШ_ЛОГИН/ИМЯ_РЕПО.git](https://github.com/yemmi17/vibehackaton
+   cd vibehackaton
    git checkout main
    ```
 2. Установите зависимости:
