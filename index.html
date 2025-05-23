@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <style>
+        @font-face {
+            font-family: 'Comfortaa';
+            src: url('fonts/Comfortaa-VariableFont_wght.ttf') format('truetype');
+            font-weight: 300 700;
+            font-display: swap;
+        }
+        body, .upgrades-panel, .upgrade-item, .upgrade-buy, .upgrade-icon, .upgrade-info, .upgrade-name, .upgrade-desc, .modal-content, h2, h1, h3, h4, h5, h6, button, input, .nav-label, .nuts-count {
+            font-family: 'Comfortaa', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+        }
+    </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Орешек Гарантии</title>
@@ -261,18 +272,157 @@
 
         /* Upgrades Panel */
         .upgrades-panel {
-            display: none;
-            padding: 20px;
-            background: white;
-            position: fixed;
-            bottom: 80px;
-            left: 10px;
-            right: 10px;
-            border-radius: 15px;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
-            max-height: 60vh;
-            overflow-y: auto;
-        }
+    display: none;
+    padding: 32px 24px 24px 24px;
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(18px) saturate(1.2);
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    min-width: 340px;
+    max-width: 420px;
+    border-radius: 28px;
+    box-shadow: 0 8px 32px rgba(58,124,165,0.18), 0 1.5px 6px rgba(0,0,0,0.09);
+    max-height: 70vh;
+    overflow-y: auto;
+    border: 1.5px solid rgba(58,124,165,0.09);
+    transition: box-shadow 0.25s, background 0.25s;
+    z-index: 2000;
+}
+
+.upgrades-panel.active {
+    display: block;
+    animation: fadeInPanel 0.33s cubic-bezier(.4,2,.6,1) both;
+}
+
+@keyframes fadeInPanel {
+    0% { opacity: 0; transform: translate(-50%, 40px) scale(0.98); }
+    100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+.upgrades-panel h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2566a5;
+    margin-bottom: 18px;
+    letter-spacing: 0.01em;
+    text-align: center;
+}
+
+#upgradesList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.upgrade-item {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.97);
+    border-radius: 18px;
+    box-shadow: 0 2px 10px rgba(58,124,165,0.07);
+    padding: 18px 20px 18px 16px;
+    gap: 18px;
+    transition: box-shadow 0.2s, transform 0.18s;
+    border: 1.5px solid rgba(58,124,165,0.08);
+    position: relative;
+}
+.upgrade-item:hover {
+    box-shadow: 0 6px 18px rgba(58,124,165,0.13);
+    transform: translateY(-2px) scale(1.012);
+}
+
+.upgrade-icon {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #3A7CA5 60%, #8CB369 100%);
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 2rem;
+    box-shadow: 0 1.5px 8px rgba(58,124,165,0.14);
+}
+
+.upgrade-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.upgrade-name {
+    font-weight: 700;
+    font-size: 1.12rem;
+    color: #2566a5;
+    margin-bottom: 2px;
+    letter-spacing: 0.01em;
+}
+
+.upgrade-desc {
+    font-size: 0.97rem;
+    color: #4d6d7a;
+    opacity: 0.93;
+    margin-bottom: 2px;
+}
+
+.upgrade-buy {
+    padding: 11px 22px;
+    background: linear-gradient(90deg, #3A7CA5 70%, #8CB369 100%);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1.07rem;
+    box-shadow: 0 1.5px 8px rgba(58,124,165,0.11);
+    transition: background 0.2s, box-shadow 0.18s, transform 0.16s;
+    margin-left: 20px;
+    outline: none;
+    letter-spacing: 0.01em;
+}
+.upgrade-buy:hover:not(:disabled) {
+    background: linear-gradient(90deg, #2566a5 60%, #8CB369 100%);
+    box-shadow: 0 3px 15px rgba(58,124,165,0.16);
+    transform: scale(1.045);
+}
+.upgrade-buy:disabled {
+    background: #d6e4ef;
+    color: #aaa;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+@media (max-width: 600px) {
+    .upgrades-panel {
+        left: 0;
+        right: 0;
+        transform: none;
+        min-width: unset;
+        max-width: 99vw;
+        border-radius: 18px;
+        padding: 18px 4vw 12px 4vw;
+    }
+    .upgrade-item {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 14px 10px;
+        gap: 10px;
+    }
+    .upgrade-icon {
+        margin: 0 auto 8px auto;
+    }
+    .upgrade-buy {
+        margin-left: 0;
+        margin-top: 8px;
+        width: 100%;
+    }
+}
+
 
         .upgrades-panel.active {
             display: block;
